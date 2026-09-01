@@ -1,105 +1,300 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZKBWEB - Login</title>
+
+    <title>ZKBWEB — Login</title>
 
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f2f4f7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .login-box {
-            background: white;
-            width: 350px;
-            padding: 35px;
-            border-radius: 15px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
-            text-align: center;
-        }
-
-        h1 {
-            margin-bottom: 10px;
-        }
-
-        p {
-            color: #666;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 8px;
+        * {
             box-sizing: border-box;
         }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 8px;
-            background: #222;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background:
+                radial-gradient(circle at top left, #374151, transparent 35%),
+                radial-gradient(circle at bottom right, #111827, transparent 40%),
+                #0f172a;
+
+            padding: 20px;
         }
 
-        button:hover {
-            background: #444;
+        .login-wrapper {
+            width: 100%;
+            max-width: 430px;
+        }
+
+        .brand {
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .brand-icon {
+            width: 68px;
+            height: 68px;
+
+            margin: 0 auto 15px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 20px;
+
+            background: white;
+            color: #111827;
+
+            font-size: 32px;
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 30px;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            margin: 8px 0 0;
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.97);
+
+            border-radius: 22px;
+
+            padding: 32px;
+
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, 0.35);
+        }
+
+        .login-card h2 {
+            margin: 0 0 7px;
+            color: #111827;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            margin: 0 0 25px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .field {
+            margin-bottom: 17px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 7px;
+
+            color: #374151;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .field input {
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+
+            outline: none;
+
+            font-size: 15px;
+
+            transition: 0.2s;
+        }
+
+        .field input:focus {
+            border-color: #111827;
+
+            box-shadow:
+                0 0 0 3px rgba(17, 24, 39, 0.10);
+        }
+
+        .login-button {
+            width: 100%;
+
+            margin-top: 5px;
+
+            padding: 13px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: #111827;
+            color: white;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .login-button:hover {
+            background: #374151;
+            transform: translateY(-1px);
         }
 
         .error {
-            color: red;
-            margin-top: 15px;
+            margin-bottom: 18px;
+
+            padding: 11px 13px;
+
+            border-radius: 9px;
+
+            background: #fee2e2;
+            color: #b91c1c;
+
+            font-size: 13px;
+        }
+
+        .security-note {
+            margin-top: 20px;
+
+            text-align: center;
+
+            color: #9ca3af;
+
+            font-size: 12px;
+        }
+
+        .footer {
+            text-align: center;
+
+            color: #94a3b8;
+
+            font-size: 12px;
+
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 25px 20px;
+            }
+
+            .brand h1 {
+                font-size: 26px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="login-box">
+<div class="login-wrapper">
 
-    <h1>🌐 ZKBWEB</h1>
+    <div class="brand">
 
-    <p>Login to continue</p>
-
-    <form method="POST">
-
-        <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            required
-        >
-
-        <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-        >
-
-        <button type="submit">
-            Login
-        </button>
-
-    </form>
-
-    {% if error %}
-        <div class="error">
-            {{ error }}
+        <div class="brand-icon">
+            🌐
         </div>
-    {% endif %}
+
+        <h1>ZKBWEB</h1>
+
+        <p>Private communication platform</p>
+
+    </div>
+
+
+    <div class="login-card">
+
+        <h2>Welcome back</h2>
+
+        <p class="subtitle">
+            Sign in to continue to ZKBWEB
+        </p>
+
+
+        {% if error %}
+
+            <div class="error">
+                ⚠️ {{ error }}
+            </div>
+
+        {% endif %}
+
+
+        <form method="POST">
+
+            <div class="field">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    id="username"
+                    type="text"
+                    name="username"
+                    placeholder="Enter your username"
+                    autocomplete="username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                class="login-button"
+                type="submit"
+            >
+                Sign in →
+            </button>
+
+        </form>
+
+
+        <div class="security-note">
+            🔒 Your session is protected
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        ZKBWEB • Secure private chat
+    </div>
 
 </div>
 
