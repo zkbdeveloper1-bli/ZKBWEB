@@ -1,17 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 import os
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.secret_key = 'super_secret_key_zkbweb'
+app.secret_key = 'super_secret_key_zkbweb_v2'
 
-# File Upload Configuration
+# Upload Configuration
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'zip'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB Max Limit
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB Max
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -20,8 +20,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chat.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Session Expiry Time (15 Minutes)
-app.permanent_session_lifetime = timedelta(minutes=15)
+app.permanent_session_lifetime = timedelta(minutes=30)
 
 # Database Models
 class Message(db.Model):
@@ -36,19 +35,28 @@ class UserSession(db.Model):
     username = db.Column(db.String(50), primary_key=True)
     force_logout = db.Column(db.Boolean, default=False)
 
-# Credentials
-USERS = {
-    "User 1": "1234",
-    "User 2": "1234",
-    "User 3": "1234"
-}
+class UserCredentials(db.Model):
+    username = db.Column(db.String(50), primary_key=True)
+    password = db.Column(db.String(100), nullable=False)
+
+def init_users():
+    default_users = {
+        "User 1": "1234",
+        "User 2": "1234",
+        "User 3": "1234"
+    }
+    for u, p in default_users.items():
+        if not UserCredentials.query.get(u):
+            db.session.add(UserCredentials(username=u, password=p))
+    db.session.commit()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.before_request
 def check_force_logout():
-    db.create_all()  # Auto-creates database tables if missing
+    db.create_all()
+    init_users()
     if 'user' in session:
         user_sess = UserSession.query.get(session['user'])
         if user_sess and user_sess.force_logout:
@@ -62,7 +70,9 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        if username in USERS and USERS[username] == password:
+        
+        user_cred = UserCredentials.query.get(username)
+        if user_cred and user_cred.password == password:
             session.permanent = True
             session['user'] = username
             
@@ -75,7 +85,7 @@ def login():
             db.session.commit()
             
             return redirect(url_for('home'))
-        return render_template('login.html', error="Invalid Credentials")
+        return render_template('login.html', error="Invalid Username or Password")
     return render_template('login.html')
 
 @app.route('/home')
@@ -106,6 +116,27 @@ def send():
         msg = Message(sender=session['user'], content=content, filename=filename, file_type=file_type)
         db.session.add(msg)
         db.session.commit()
+    return redirect(url_for('home'))
+
+@app.route('/change_password', methods=['POST'])
+def change_password():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
+    current_user = session['user']
+    target_user = request.form.get('target_user')
+    new_password = request.form.get('new_password')
+
+    if not new_password or len(new_password.strip()) == 0:
+        return redirect(url_for('home'))
+
+    # Admin User 1 can change anyone's password. Other users can only change their own.
+    if current_user == 'User 1' or current_user == target_user:
+        user_cred = UserCredentials.query.get(target_user)
+        if user_cred:
+            user_cred.password = new_password
+            db.session.commit()
+            
     return redirect(url_for('home'))
 
 @app.route('/force_logout/<target_user>', methods=['POST'])
