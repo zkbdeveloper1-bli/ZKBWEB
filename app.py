@@ -36,9 +36,6 @@ class UserSession(db.Model):
     username = db.Column(db.String(50), primary_key=True)
     force_logout = db.Column(db.Boolean, default=False)
 
-with app.app_context():
-    db.create_all()
-
 # Credentials
 USERS = {
     "User 1": "1234",
@@ -51,6 +48,7 @@ def allowed_file(filename):
 
 @app.before_request
 def check_force_logout():
+    db.create_all()  # Auto-creates database tables if missing
     if 'user' in session:
         user_sess = UserSession.query.get(session['user'])
         if user_sess and user_sess.force_logout:
